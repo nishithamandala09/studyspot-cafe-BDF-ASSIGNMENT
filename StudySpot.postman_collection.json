@@ -1,0 +1,100 @@
+{
+  "info": {
+    "name": "StudySpot Cafe API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [{ "key": "base", "value": "http://localhost:3000" }],
+  "item": [
+    {
+      "name": "TWIST TESTS",
+      "item": [
+        {
+          "name": "Test 1 - Return a booking (200)",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+            "pm.test('return_date is set', function () { pm.expect(pm.response.json().return_date).to.not.be.null; });"
+          ] } }],
+          "request": { "method": "POST", "url": "{{base}}/bookings/1/return" }
+        },
+        {
+          "name": "Test 2 - Return it again (409)",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "pm.test('Status is 409', function () { pm.response.to.have.status(409); });",
+            "pm.test('Message is Already returned', function () { pm.expect(pm.response.json().error).to.eql('Already returned'); });"
+          ] } }],
+          "request": { "method": "POST", "url": "{{base}}/bookings/1/return" }
+        },
+        {
+          "name": "Test 3 - Student 1 history (200, listed)",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+            "pm.test('Booking 1 is listed', function () { pm.expect(pm.response.json().some(function (b) { return b.id === 1; })).to.be.true; });"
+          ] } }],
+          "request": { "method": "GET", "url": "{{base}}/students/1/history" }
+        }
+      ]
+    },
+    {
+      "name": "Carrels",
+      "item": [
+        { "name": "Get all carrels", "request": { "method": "GET", "url": "{{base}}/carrels" } },
+        { "name": "Search carrels by zone", "request": { "method": "GET", "url": "{{base}}/carrels?zone=Quiet" } },
+        { "name": "Search carrels available now", "request": { "method": "GET", "url": "{{base}}/carrels?available=true" } },
+        { "name": "Get one carrel", "request": { "method": "GET", "url": "{{base}}/carrels/1" } },
+        { "name": "Get one carrel - not found (404)", "request": { "method": "GET", "url": "{{base}}/carrels/999" } },
+        {
+          "name": "Add carrel (201)",
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{base}}/carrels",
+            "body": { "mode": "raw", "raw": "{ \"name\": \"Carrel C1\", \"zone\": \"Quiet\" }" } }
+        },
+        {
+          "name": "Add carrel - invalid (400)",
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{base}}/carrels",
+            "body": { "mode": "raw", "raw": "{ \"name\": \"\" }" } }
+        },
+        {
+          "name": "Update carrel (200)",
+          "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{base}}/carrels/2",
+            "body": { "mode": "raw", "raw": "{ \"name\": \"Carrel A2 Window\", \"zone\": \"Quiet\" }" } }
+        },
+        { "name": "Delete carrel (200)", "request": { "method": "DELETE", "url": "{{base}}/carrels/4" } }
+      ]
+    },
+    {
+      "name": "Students",
+      "item": [
+        { "name": "Get all students", "request": { "method": "GET", "url": "{{base}}/students" } },
+        { "name": "Get one student", "request": { "method": "GET", "url": "{{base}}/students/1" } },
+        {
+          "name": "Add student (201)",
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{base}}/students",
+            "body": { "mode": "raw", "raw": "{ \"name\": \"Meena\", \"email\": \"meena@example.com\" }" } }
+        },
+        {
+          "name": "Update student (200)",
+          "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{base}}/students/2",
+            "body": { "mode": "raw", "raw": "{ \"name\": \"Ravi K\", \"email\": \"ravi@example.com\" }" } }
+        },
+        { "name": "Delete student (200)", "request": { "method": "DELETE", "url": "{{base}}/students/3" } }
+      ]
+    },
+    {
+      "name": "Bookings",
+      "item": [
+        { "name": "Get all bookings (JOIN: student + carrel names)", "request": { "method": "GET", "url": "{{base}}/bookings" } },
+        { "name": "Get one booking", "request": { "method": "GET", "url": "{{base}}/bookings/1" } },
+        {
+          "name": "Add booking (201)",
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{base}}/bookings",
+            "body": { "mode": "raw", "raw": "{ \"student_id\": 2, \"carrel_id\": 3 }" } }
+        },
+        {
+          "name": "Add booking - carrel taken (409)",
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{base}}/bookings",
+            "body": { "mode": "raw", "raw": "{ \"student_id\": 2, \"carrel_id\": 3 }" } }
+        },
+        { "name": "Delete booking (200)", "request": { "method": "DELETE", "url": "{{base}}/bookings/2" } }
+      ]
+    }
+  ]
+}

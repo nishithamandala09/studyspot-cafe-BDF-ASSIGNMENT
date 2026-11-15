@@ -1,0 +1,14 @@
+{
+  "name": "studyspot-cafe",
+  "version": "1.0.0",
+  "description": "StudySpot Cafe - study carrel booking API (Express + SQLite)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test.js"
+  },
+  "dependencies": {
+    
+    "express": "^4.19.2"
+  }
+}
